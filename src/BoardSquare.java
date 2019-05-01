@@ -20,7 +20,8 @@ public class BoardSquare
 	private Color shadowWhite = new Color(200, 200, 200);
 	private Color shadowBlack = new Color(15, 15, 15);
 	private Color stoneShine = new Color(230,230, 230);
-	boolean isInner = false;
+	private boolean isInner = false;
+	private boolean isWinningSquare = false;
 	
 	
 	//constructor
@@ -84,7 +85,7 @@ public class BoardSquare
 				g.setColor(shadowWhite);
 			}
 			
-			g.fillOval(xLoc-1, yLoc+4, sWidth-8, sHeight-8);
+			g.fillOval(xLoc-1, yLoc+4, sWidth-6, sHeight-6);
 			
 			
 			
@@ -139,6 +140,21 @@ public class BoardSquare
 			
 		}
 		
+		if(isWinningSquare == true)
+		{
+			Graphics2D g2 = (Graphics2D) g;
+			g2.setStroke(new BasicStroke(3));
+			
+			g2.setColor(Color.RED);
+			
+			g2.drawOval(xLoc+2, yLoc+2, sWidth-4, sHeight-4);
+			g2.setStroke(new BasicStroke(1));
+			
+			
+			
+			
+		}
+		
 	}
 	
 	public void setState(int newState)
@@ -151,14 +167,62 @@ public class BoardSquare
 			sState = newState;
 		}
 		
-		
-		
-		
-		
-		
+	}
+
+	
+	//accessor method to get state for board
+	public int getState()
+	{
+		return sState;
 	}
 	
 	
+	
+	
+	
+	public void setWidth(int newW)
+	{
+		sWidth = newW;
+	}
+	
+	public void setHeight(int newH)
+	{
+		sHeight = newH;
+	}
+	
+	public void setXLoc(int newX)
+	{
+		xLoc = newX;
+	}
+	
+	public void setYLoc(int newY)
+	{
+		yLoc = newY;
+	}
+	
+	
+	public boolean isClicked(int clickX, int clickY)
+	{
+		boolean didYouClickMe = false;
+		
+		if(xLoc < clickX && clickX < xLoc + sWidth)
+		{
+			if(yLoc < clickY && clickY < yLoc + sHeight)
+			{
+				didYouClickMe = true;
+			}
+		}
+		
+		return didYouClickMe;
+	}
+	
+	
+	
+	
+	public void setWinningSquare(boolean newState)
+	{
+		isWinningSquare = newState;
+	}
 	
 }
 
