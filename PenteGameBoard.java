@@ -2,12 +2,13 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-public class PenteGameBoard extends JPanel implements MouseListener
+public class PenteGameBoard extends JPanel implements MouseListener, MouseMotionListener
 {
 	
 	public static final int EMPTY = 0;
@@ -20,6 +21,7 @@ public class PenteGameBoard extends JPanel implements MouseListener
 	public static final int PLAYER2_TURN = -1;
 	public static final int WIN_CAPTURES = 10;
 	public static final int SLEEP_TIME = 100;
+	public static boolean WIN_CAP = false;
 	
 	int bWidth, bHeight;
 	//PenteGameRunner myGame;
@@ -41,6 +43,7 @@ public class PenteGameBoard extends JPanel implements MouseListener
 	//data structure for the board
 	private BoardSquare[][] gameBoard;
 	private PenteScore myScoreBoard;
+	
 	
 	private ComputerMoveGenerator p1ComputerPlayer = null;
 	private ComputerMoveGenerator p2ComputerPlayer = null;
@@ -85,13 +88,11 @@ public class PenteGameBoard extends JPanel implements MouseListener
 		
 		//add mouse listener capability
 		addMouseListener(this);
+		addMouseMotionListener(this);
 		this.setFocusable(true);
 		
 		
 	}
-	
-	
-	
 	
 		//method to do drawing
 		public void paintComponent(Graphics g)
@@ -195,7 +196,6 @@ public class PenteGameBoard extends JPanel implements MouseListener
 			myScoreBoard.setPlayerTurn(playerTurn);
 		}
 		
-		
 		public void checkClick(int clickX, int clickY)
 		{
 			if(!gameOver)
@@ -216,11 +216,8 @@ public class PenteGameBoard extends JPanel implements MouseListener
 						gameBoard[row][col].setState(playerTurn);
 						checkCaptures(row, col, playerTurn);
 						this.repaint();
-						//this.paintImmediately(0, 0, bWidth, bHeight);
-						//checkWin(row, col, playerTurn);
 						fiveInARow(playerTurn);
 						checkForWin(playerTurn);
-						//this.repaint();
 						this.changePlayerTurn();
 						checkForComputerMove(playerTurn);
 					} 
@@ -240,30 +237,31 @@ public class PenteGameBoard extends JPanel implements MouseListener
 			}
 		}
 		
-		
 		public void checkForComputerMove(int whichPlayer)
 		{
 			if(whichPlayer == this.PLAYER1_TURN && this.player1IsComputer)
 			{
-				System.out.println("checking for p1 computer move");
-				int[] nextMove = this.p1ComputerPlayer.getComputerMover();
-				int newR = nextMove[0];
-				int newC = nextMove[1];
-				gameBoard[newR][newC].setState(playerTurn);
-				this.repaint();
-				checkCaptures(newR, newC, playerTurn);
-				this.paintImmediately(0, 0, bWidth, bHeight);
-				this.checkForWin(playerTurn);
 				if(!gameOver)
 				{
-					this.changePlayerTurn();
-					checkForComputerMove(playerTurn);
+					System.out.println("checking for p1 computer move");
+					int[] nextMove = this.p1ComputerPlayer.getComputerMove();
+					int newR = nextMove[0];
+					int newC = nextMove[1];
+					gameBoard[newR][newC].setState(playerTurn);
+					this.repaint();
+					checkCaptures(newR, newC, playerTurn);
+					this.paintImmediately(0, 0, bWidth, bHeight);
+					this.checkForWin(playerTurn);
+					if(!gameOver)
+						{
+							this.changePlayerTurn();
+							checkForComputerMove(playerTurn);
+						}
 				}
-				
 		}else if(whichPlayer == this.PLAYER2_TURN && this.player2IsComputer)
 		{
 			System.out.println("checking for p2 computer move");
-			int[] nextMove = this.p2ComputerPlayer.getComputerMover();
+			int[] nextMove = this.p2ComputerPlayer.getComputerMove();
 			int newR = nextMove[0];
 			int newC = nextMove[1];
 			gameBoard[newR][newC].setState(playerTurn);
@@ -278,7 +276,6 @@ public class PenteGameBoard extends JPanel implements MouseListener
 			}
 		}
 		}
-		
 		
 		public boolean darkStoneProblem(int r, int c)
 		{
@@ -300,6 +297,28 @@ public class PenteGameBoard extends JPanel implements MouseListener
 			}
 			return dsp;
 		}
+		
+		public boolean darkStoneProblemComputerMoveList(int r, int c)
+		{
+			boolean dsp = false;
+			
+			if((!dsmt) && (playerTurn == BLACKSTONE))
+			{
+				if(r >= INNER_START 
+					&& r <= INNER_END 
+					&& c >= INNER_START 
+					&& c <= INNER_END)
+					{
+						dsp = true;
+					}	
+				else
+				{
+					
+				}
+			}
+			return dsp;
+		}
+		
 		
 		public boolean fiveInARow(int whichPlayer)
 		{
@@ -329,7 +348,6 @@ public class PenteGameBoard extends JPanel implements MouseListener
 			
 			return isFive;
 		}
-		
 		
 		public void checkForWin(int whichPlayer)
 		{
@@ -373,24 +391,6 @@ public class PenteGameBoard extends JPanel implements MouseListener
 			
 			
 		}
-		/*
-		public void checkWin(int r, int c, int pt)
-		{
-			boolean didWin;
-			
-			
-			for(int rL = -1; rL <=1; rL++)
-			{
-				for(int uD = -1; uD <=1; uD++)
-				{
-					didWin = checkWin(r, c, pt, rL, uD);
-				
-				System.out.println(rL + "," + uD + " This is from checkWin");
-				}
-			}
-		
-		}
-		*/
 		
 		public boolean checkWin(int r, int c, int pt, int upDown, int rightLeft)
 		{
@@ -453,10 +453,6 @@ public class PenteGameBoard extends JPanel implements MouseListener
 			}
 		}
 		
-		
-		
-		
-		
 		public void checkCaptures(int r, int c, int pt)
 		{
 			boolean didCapture;
@@ -514,43 +510,34 @@ public class PenteGameBoard extends JPanel implements MouseListener
 				return false;
 			}
 		}
-
 		
-
 		@Override
 		public void mouseClicked(MouseEvent e)
 		{
 			// TODO Auto-generated method stub
 			System.out.println("You clicked me");
 			System.out.println("And you clicked at [" + e.getX() + "," + e.getY() +"]");
-			
 				this.checkClick(e.getX(), e.getY());
-				
-				
-				
-			
-			
-			
 		}
-
+		
 		@Override
 		public void mousePressed(MouseEvent e) {
 			// TODO Auto-generated method stub
 			
 		}
-
+		
 		@Override
 		public void mouseReleased(MouseEvent e) {
 			// TODO Auto-generated method stub
 			
 		}
-
+		
 		@Override
 		public void mouseEntered(MouseEvent e) {
 			// TODO Auto-generated method stub
 			
 		}
-
+		
 		@Override
 		public void mouseExited(MouseEvent e) {
 			// TODO Auto-generated method stub
@@ -647,53 +634,51 @@ public class PenteGameBoard extends JPanel implements MouseListener
 			
 			
 		}
-
-
-
-
+		
 		public BoardSquare[][] getBoard()
 		{
 			return gameBoard;
 		}
-		
-		
-		
-		
-		/*
-		public void updateSizes()
-		{
-		
-		if(myFrame.getWidth() != bWidth || myFrame.getHeight() != bHeight + 20)
-		{
-			bWidth = myFrame.getWidth();
-			bHeight = myFrame.getHeight() - 20;
+
+		@Override
+		public void mouseDragged(MouseEvent e) {
+			// TODO Auto-generated method stub
 			
-			squareW = bWidth/this.SIDE_SQUARES;
-			squareH = bHeight/this.SIDE_SQUARES;
-			
-			resetSquares(squareW, squareH);
+		}
+
+		@Override
+		public void mouseMoved(MouseEvent e) {
+			// TODO Auto-generated method stub
+			//System.out.println("The mouse was moved");
+			checkEnter(e.getX(), e.getY());
+			repaint();
 		}
 		
-		}
-		
-		public void resetSquares(int w, int h)
+		public void checkEnter(int enterX, int enterY)
 		{
 			for(int row = 0; row < SIDE_SQUARES; row++)
 			{
 				for(int col = 0; col < SIDE_SQUARES; col++)
 				{
-					gameBoard[row][col].setXLoc(col*w);
-					gameBoard[row][col].setYLoc(row*h);
-					gameBoard[row][col].setWidth(w);
-					gameBoard[row][col].setHeight(h);
-				}
-			}
-			
-			
+				
+					boolean squareEntered = gameBoard[row][col].isEntered(enterX, enterY);
+					if(squareEntered)
+					{	
+						gameBoard[row][col].setSquareColor();
+						repaint();
+					}	else
+					{
+						gameBoard[row][col].resetSquareColor();
+						repaint();
+					}
+				} 
+			} 
+			repaint(); 
 		}
 		
-		*/
+		public boolean getDarkStoneMove2Taken()
+		{
+			return dsmt;
+		}
 		
-		
-	
-}
+	}

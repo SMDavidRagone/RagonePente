@@ -188,9 +188,6 @@ public class PenteScore extends JPanel implements ActionListener
 				Rectangle r = p2Captures.getVisibleRect();
 				p2Captures.paintImmediately(r);
 			}
-			
-			
-			
 		}
 		
 		public void setPlayerTurn(int whichPlayer)
@@ -230,16 +227,11 @@ public class PenteScore extends JPanel implements ActionListener
 			wTurnField.paintImmediately(r);
 		}
 		}
-
 		
 		public void setGameBoard(PenteGameBoard gb)
 		{
 			myBoard = gb;
 		}
-		
-		
-		
-		
 		
 		@Override
 		public void actionPerformed(ActionEvent e)
@@ -252,8 +244,5 @@ public class PenteScore extends JPanel implements ActionListener
 			if(myBoard != null) myBoard.startNewGame(false);
 			
 		}
-			
-			
-			
 		
 }

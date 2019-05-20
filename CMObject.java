@@ -59,11 +59,11 @@ public class CMObject implements Comparable<Object> {
 		{
 			return "Move at: [" + row + "," + col + "] priority: " + priority;
 		}
-
+		
 		@Override
 		public int compareTo(Object o) {
 			// TODO Auto-generated method stub
-			int comparePriority=((CMObject)o).getPriority();
-			return comparePriority-this.priority;
+			int comparePriority = ((CMObject)o).getPriority();
+			return comparePriority - this.priority;
 		}
 }

@@ -20,6 +20,7 @@ public class BoardSquare
 	private Color shadowWhite = new Color(200, 200, 200);
 	private Color shadowBlack = new Color(15, 15, 15);
 	private Color stoneShine = new Color(230,230, 230);
+	private Color hoverColor = new Color(40, 170, 25);
 	private boolean isInner = false;
 	private boolean isWinningSquare = false;
 	
@@ -107,6 +108,7 @@ public class BoardSquare
 	//	g.drawLine(xLoc + sWidth/2, yLoc, xLoc + sWidth/2, yLoc + sHeight);
 		
 		
+			
 		if(sState == PenteGameBoard.BLACKSTONE)
 		{
 			Graphics2D g2 = (Graphics2D) g;
@@ -168,17 +170,17 @@ public class BoardSquare
 		}
 		
 	}
-
+	
+	public void setSquareColor()
+	{
+		sColor = hoverColor;
+	}
 	
 	//accessor method to get state for board
 	public int getState()
 	{
 		return sState;
 	}
-	
-	
-	
-	
 	
 	public void setWidth(int newW)
 	{
@@ -201,6 +203,11 @@ public class BoardSquare
 	}
 	
 	
+	public void resetSquareColor()
+	{
+		sColor = new Color(40, 110, 25);
+	}
+	
 	public boolean isClicked(int clickX, int clickY)
 	{
 		boolean didYouClickMe = false;
@@ -217,30 +224,37 @@ public class BoardSquare
 	}
 	
 	
+	public boolean isEntered(int enterX, int enterY)
+	{
+		boolean didYouEnterMe = false;
+		
+		if(xLoc < enterX && enterX < xLoc + sWidth)
+		{
+			if(yLoc < enterY && enterY < yLoc + sHeight)
+			{
+				didYouEnterMe = true;
+			}
+		}
+		if(xLoc > enterX && enterX > xLoc + sWidth)
+		{
+			if(yLoc > enterY && enterY > yLoc + sHeight)
+			{
+				didYouEnterMe = false;
+			}
+		}
+		
+		return didYouEnterMe;
+	}
 	
 	
 	public void setWinningSquare(boolean newState)
 	{
 		isWinningSquare = newState;
 	}
+
+	public void setSquareColor1() {
+		// TODO Auto-generated method stub
+		sColor = hoverColor;
+	}
 	
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
